@@ -2,11 +2,11 @@ import java.util.Random;
 
 public class ScrollArt {
     static final int WIDTH = getTerminalWidth() - 1;
-    static final int SHARK_WIDTH = 19;
+    static final int SHARK_WIDTH = 20;
     static final int SHARK_HEIGHT = 8;
     static final int FISH_WIDTH = 12;
     static final int FISH_HEIGHT = 10;
-    static final int BONES_WIDTH = 17;
+    static final int BONES_WIDTH = 21;
     static final int BONES_HEIGHT = 12;
     static final Random rand = new Random();
     // NO OVERLAPS
@@ -16,8 +16,8 @@ public class ScrollArt {
     // specific width
 
     public static void main(String[] args) throws InterruptedException {
-        long startTime = System.currentTimeMillis();
-        int iterations = 0;
+
+        
         char[][] nextRows = new char[19][WIDTH]; // store upcoming rows
         for (int i = 0; i < nextRows.length; i++) {
             nextRows[i] = emptyRow();
@@ -42,8 +42,7 @@ public class ScrollArt {
             // Shift all rows up
             shiftRowsUp(nextRows);
             Thread.sleep(200); // Delay in ms
-            long time = System.currentTimeMillis() - startTime;
-            iterations++;
+           
 
             //System.err.println("average time per frame: " + (time / iterations) + " ms");
         }
@@ -144,11 +143,11 @@ public class ScrollArt {
         img[3][18] = '\\';  
 
         img[4][5] = '>';  
-        img[4][18] = '>';  
+        img[4][19] = '>';  
         img[5][4] = '/';  
 
         img[5][18] = '/';  
-        img[5][17] = '0';  
+        img[4][18] = '0';  
         img[5][18] = '/';  
 //bottem
         img[6][6] = '\\'; 
@@ -193,11 +192,13 @@ public class ScrollArt {
         img[4][5] = '\\';
         img[4][9] = '\\';
         img[4][5] = '\\';
+
         img[4][8] = '/';
         img[5][6] = '>';
         img[5][7] = '=';
         img[5][10] = 'o';
         img[5][11] = '>';
+
         img[6][5] = '/';
         img[6][8] = '\\';
         img[6][9] = '/';
@@ -239,6 +240,16 @@ static char[][] getBones() {
         img[8][3] = ')';
         img[7][4] = ')';
         img[6][4] = ')';
+
+        img[9][20] = '_';
+        img[9][19] = '_';
+        img[9][20] = ')';
+        img[8][19] = '(';
+        img[7][20] = ')';
+        img[6][20] = '(';
+        img[5][20] = ')';
+
+
 
 
 
