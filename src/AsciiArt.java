@@ -1,3 +1,5 @@
+
+//the penguin can take a long time to pop up, so if you dont see it originally you may have to wait a few minuts
 public class AsciiArt {
     char[][] img;
     int height;
@@ -96,15 +98,6 @@ public class AsciiArt {
         }
         return widest;
     }
-
-    // really only for debugging
-    private void printArt() {
-        for (int i = 0; i < this.height; i++) {
-            for (int j = 0; j < this.width; j++) {
-                System.out.print(this.img[i][j]);
-            }
-            System.out.println();
-        }
-    }
-
 }
+
+    

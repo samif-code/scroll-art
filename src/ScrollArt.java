@@ -20,7 +20,7 @@ public class ScrollArt {
     public static void main(String[] args) throws InterruptedException {
 
         
-        char[][] nextRows = new char[35][WIDTH]; // store upcoming rows
+        char[][] nextRows = new char[45][WIDTH]; // store upcoming rows
         for (int i = 0; i < nextRows.length; i++) {
             nextRows[i] = emptyRow();
             
@@ -28,7 +28,7 @@ public class ScrollArt {
         char[] prevRow = nextRows[0];
         while (true) {
             // At each column on the top row, 1% chance to add a new image
-            for (int x = 0; x < WIDTH - 34; x += 34) {
+            for (int x = 0; x < WIDTH - 45; x += 46) {
                 if (isBlank(prevRow, x) && rand.nextDouble() < 0.08) {
                     loadNextRowsWithImage(nextRows, x);
                 }
@@ -57,7 +57,7 @@ public class ScrollArt {
     }
 
     static boolean isBlank(char[] prevRow, int x) {
-        for (int i = x; i < x + 34; i++) {
+        for (int i = x; i < x + 45; i++) {
             if (prevRow[i] != ' ') {
                 return false;
             }
