@@ -2,32 +2,34 @@ import java.util.Random;
 
 public class ScrollArt {
     static final int WIDTH = getTerminalWidth() - 1;
-    static final int SHARK_WIDTH = 20;
-    static final int SHARK_HEIGHT = 8;
+    static final int  BIGFISH_WIDTH = 20;
+    static final int BIGFISH_HEIGHT = 8;
     static final int FISH_WIDTH = 12;
     static final int FISH_HEIGHT = 10;
     static final int BONES_WIDTH = 21;
     static final int BONES_HEIGHT = 12;
     static final Random rand = new Random();
-    // NO OVERLAPS
-    // 1. Skip every w (width) characters instead of every column to reduce
-    // horizontal overlap
-    // 2. How do you reduce overlap vertically? Remember previous row at the
-    // specific width
 
+              
     public static void main(String[] args) throws InterruptedException {
 
         
-        char[][] nextRows = new char[19][WIDTH]; // store upcoming rows
+        char[][] nextRows = new char[35][WIDTH]; // store upcoming rows
         for (int i = 0; i < nextRows.length; i++) {
             nextRows[i] = emptyRow();
             
         }
         char[] prevRow = nextRows[0];
-
         while (true) {
-             // At each lane, 7% chance to add a new image if it fits and the area is clear
-            for (int x = 0; x < WIDTH; x += SHARK_WIDTH+1) {
+            // At each column on the top row, 1% chance to add a new image
+            for (int x = 0; x < WIDTH - 34; x += 34) {
+                if (isBlank(prevRow, x) && rand.nextDouble() < 0.08) {
+                    loadNextRowsWithImage(nextRows, x);
+                }
+            }
+
+            // THIS CODE IS MINE
+            for (int x = 0; x < WIDTH; x += BIGFISH_WIDTH + 1) {
                 if (rand.nextDouble() < 0.07) {
                     char[][] img = randomImage();
                     if (fits(img, x) && isClear(nextRows, prevRow, img, x)) {
@@ -35,24 +37,33 @@ public class ScrollArt {
                     }
                 }
             }
-           
+
             // Print and remove the top row
             System.out.println(new String(nextRows[0]));
             prevRow = nextRows[0]; // update prev row
             // Shift all rows up
             shiftRowsUp(nextRows);
             Thread.sleep(200); // Delay in ms
-           
 
             //System.err.println("average time per frame: " + (time / iterations) + " ms");
+            //this was distracting me from the art, so I commented it out.
         }
+    }
+
+    static boolean isBlank(char[] prevRow, int x) {
+        for (int i = x; i < x + 34; i++) {
+            if (prevRow[i] != ' ') {
+                return false;
+            }
+        }
+        return true;
     }
 
     // pick an image first, then build only that one
     static char[][] randomImage() {
         int choice = rand.nextInt(3);
         if (choice == 0) {
-            return getShark();
+            return getBigFish();
         }
         if (choice == 1) {
             return getFish();
@@ -61,13 +72,14 @@ public class ScrollArt {
     
     }
 
-    // does the image fit horizontally if placed at column x?
+    // my code
     static boolean fits(char[][] img, int x) {
         return x + img[0].length <= WIDTH;
     }
 
     // #2: checking the row just printed and every upcoming row the image will
     // cover are blank across the image's full width
+    //my code
     static boolean isClear(char[][] nextRows, char[] prevRow, char[][] img, int x) {
         int w = img[0].length;
         for (int i = x; i < x + w; i++) {
@@ -85,13 +97,42 @@ public class ScrollArt {
         return true;
     }
 
+    private static void loadNextRowsWithImage(char[][] nextRows, int x) {
+        AsciiArt mouse = new AsciiArt(getFish());
+        mouse.switchRowsAndCols();
+        String llama = """
+                /^---^\\
+                | . . |
+                \\  `  /   MS
+                /=====\\________
+                /               \\[]
+                \\               /
+                ---------------
+                | || |   | || |
+                [|][|]   [|][|]
+                """;
+        AsciiArt l = new AsciiArt(llama);
+        AsciiArt[] images = { new AsciiArt(getBigFish()), new AsciiArt(getFish()), new AsciiArt(getBones()),
+                mouse, l };
+        AsciiArt art = images[rand.nextInt(images.length)];
+        AsciiArt widestArt = AsciiArt.getWidestArt(images);
+        art.resize(widestArt.width);
+
+        for (int iy = 0; iy < art.height; iy++) {
+            for (int ix = 0; ix < art.width; ix++) {
+                nextRows[iy][x + ix] = art.img[iy][ix];
+            }
+        }
+    }
+
     private static void loadNextRowsWithImage(char[][] nextRows, char[][] img, int x) {
-        for (int iy = 0; iy < img.length; iy++) { // height
-            for (int ix = 0; ix < img[iy].length; ix++) { // width
+        for (int iy = 0; iy < img.length; iy++) {
+            for (int ix = 0; ix < img[iy].length; ix++) {
                 nextRows[iy][x + ix] = img[iy][ix];
             }
         }
     }
+    
 
     static void shiftRowsUp(char[][] nextRows) {
         for (int i = 1; i < nextRows.length; i++) {
@@ -111,11 +152,11 @@ public class ScrollArt {
 
 
     // rename your function here
-    static char[][] getShark() {
-        char[][] img = new char[SHARK_HEIGHT][SHARK_WIDTH];
+    static char[][] getBigFish() {
+        char[][] img = new char[BIGFISH_HEIGHT][BIGFISH_WIDTH];
         // fill with empty space
-        for (int y = 0; y < SHARK_HEIGHT; y++) {
-            for (int x = 0; x < SHARK_WIDTH; x++) {
+        for (int y = 0; y < BIGFISH_HEIGHT; y++) {
+            for (int x = 0; x < BIGFISH_WIDTH; x++) {
                 img[y][x] = ' ';
             }
         }
@@ -162,6 +203,9 @@ public class ScrollArt {
         img[6][15] = '_';   
         img[6][16] = '_';   
         img[6][17] = '_'; 
+
+        img[7][5] = 'S'; 
+        img[7][6] = 'F'; 
  
 
 
@@ -206,7 +250,10 @@ public class ScrollArt {
         img[7][8] = '/';
         img[8][3] = '/';
         img[8][7] = '/';
-        
+
+
+        img[8][5] = 'S'; 
+        img[8][6] = 'F'; 
 
         
 
@@ -248,6 +295,11 @@ static char[][] getBones() {
         img[7][20] = ')';
         img[6][20] = '(';
         img[5][20] = ')';
+
+        img[8][5] = 'S'; 
+        img[8][6] = 'F'; 
+
+        //0K1D1CBVZS0OMA my code for the ASCII art meuseum
 
 
 
